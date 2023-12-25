@@ -20,7 +20,7 @@ import "./BridgeCoin.sol";
  * the methods to add functionality. Consider using 'super' where appropiate to concatenate
  * behavior.
  */
-contract Crowdsale {
+contract BridgeCoinSale {
   // The token being sold
   BridgeCoin public token;
 
@@ -197,3 +197,5 @@ contract Crowdsale {
     wallet.transfer(msg.value);
   }
 }
+
+// deployed at: 0x398ddd219d0ea09eE3fe8609858c896AA5651954

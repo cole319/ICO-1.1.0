@@ -41,5 +41,5 @@ contract BridgeCoin {
     } 
 } 
 
-
+// COIN_DEPLOYMENT_ADDRESS = "0x4A838274C6ADd07DD23741589846D74Facf66f6D"
 

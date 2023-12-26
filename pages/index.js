@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import "./App.css";
+// import "./App.css";
+import dotenv from "dotenv";
+dotenv.config();
 
-import { Tsunami } from "react-bootstrap-icons";
+import { CiMoneyBill } from "react-icons/ci";
 
 // import artifact from "./artifacts/contracts/BridgeCoinSale.sol/BridgeCoinSale.json";
 import artifact from "../artifacts/contracts/BridgeCoinSale.sol/BridgeCoinSale.json";
-const CONTRACT_ADDRESS = "0x398ddd219d0ea09eE3fe8609858c896AA5651954";
+const CONTRACT_ADDRESS = "0x669e629Df706BA32C6aB53f1EA7fb2DD51B517d1";
 
 function App() {
-  const [provider, setProvider] = useState(undefined);
-  const [signer, setSigner] = useState(undefined);
-  const [contract, setContract] = useState(undefined);
-  const [signerAddress, setSignerAddress] = useState(undefined);
+  const [provider, setProvider] = useState();
+  const [signer, setSigner] = useState();
+  const [contract, setContract] = useState();
+  const [signerAddress, setSignerAddress] = useState();
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
@@ -39,6 +41,7 @@ function App() {
   };
 
   const getSigner = async (provider) => {
+    // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
     const signer = provider.getSigner();
 
     signer.getAddress().then((address) => {
@@ -65,7 +68,7 @@ function App() {
               <div className="list-group-item">
                 <div className="row py-3">
                   <div className="col-md-2">
-                    <Tsunami
+                    <CiMoneyBill
                       className="rounded-circle"
                       width="36"
                       height="36"

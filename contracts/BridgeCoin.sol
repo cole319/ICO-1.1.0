@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract BridgeCoin {
-    uint256 public totalSupply = 10000000 * 10 ** 18;
+    uint256 public totalSupply = 100000000 * 10 ** 18;
     string public name = "BridgeCoin";
     string public symbol = "BGC";
     uint256 public decimal = 18;
@@ -41,5 +41,5 @@ contract BridgeCoin {
     } 
 } 
 
-// deployed at : 0x3358a9cC0fe1dC3D36Ba922112ccb66A581f2aEC
+
 

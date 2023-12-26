@@ -8,8 +8,6 @@ async function main() {
   console.log(`BridgeCoin Contract deployed at ${bridgeCoin.target}`);
 
   const bridgeCoinSale = await hre.ethers.deployContract("BridgeCoinSale", [
-    2,
-    "0xb2EB88976AaE52aC630599b19aEd0179dbEb2fB6",
     bridgeCoin.target,
   ]);
 

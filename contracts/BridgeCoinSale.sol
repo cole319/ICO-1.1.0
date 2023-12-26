@@ -48,17 +48,15 @@ contract BridgeCoinSale {
   );
 
   /**
-   * @param _rate Number of token units a buyer gets per wei
-   * @param _wallet Address where collected funds will be forwarded to
    * @param _token Address of the token being sold
    */
-  constructor(uint256 _rate, address payable _wallet, BridgeCoin _token) {
-    require(_rate > 0);
-    require(_wallet != address(0));
+  constructor(BridgeCoin _token) {
+    // require(_rate > 0)
+    // require(_wallet != address(0));
     // require(address(_token) != address(0));
 
-    rate = _rate;
-    wallet = _wallet;
+    rate = 2;
+    wallet = payable(0x03FD96F3FFF601756262a461B77437a2C26EFb28);
     token = _token;
   }
 
@@ -198,4 +196,3 @@ contract BridgeCoinSale {
   }
 }
 
-// deployed at: 0x398ddd219d0ea09eE3fe8609858c896AA5651954

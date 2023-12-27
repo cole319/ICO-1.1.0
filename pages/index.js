@@ -11,45 +11,149 @@ import artifact from "../artifacts/contracts/BridgeCoinSale.sol/BridgeCoinSale.j
 const CONTRACT_ADDRESS = "0x669e629Df706BA32C6aB53f1EA7fb2DD51B517d1";
 
 function App() {
-  const [provider, setProvider] = useState();
-  const [signer, setSigner] = useState();
-  const [contract, setContract] = useState();
-  const [signerAddress, setSignerAddress] = useState();
+  const [provider, setProvider] = useState(undefined);
+  const [signer, setSigner] = useState(undefined);
+  const [contract, setContract] = useState(undefined);
+  const [signerAddress, setSignerAddress] = useState(undefined);
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
-    const onLoad = async () => {
-      const provider = await new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(provider);
+    getConnectedWalletAddress();
+    addWalletListener();
+  }, [signerAddress]);
 
-      const contract = await new ethers.Contract(
-        CONTRACT_ADDRESS,
-        artifact.abi,
-        provider
-      );
-      setContract(contract);
-    };
-    onLoad();
-  }, []);
+  const connectWallet = async () => {
+    if (typeof window != "undefined" && typeof window.ethereum != "undefined") {
+      try {
+        /* get provider */
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        setProvider(provider);
+        /* get accounts */
+        const accounts = await provider.send("eth_requestAccounts", []);
+        /* get signer */
+        setSigner(provider.getSigner());
+        /* local contract instance */
+
+        const contract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          artifact.abi,
+          provider
+        );
+
+        setContract(contract);
+        /* set active wallet address */
+        setSignerAddress(accounts[0]);
+      } catch (err) {
+        console.error(err.message);
+      }
+    } else {
+      /* MetaMask is not installed */
+      console.log("Please install MetaMask");
+    }
+  };
+
+  const getConnectedWalletAddress = async () => {
+    if (typeof window != "undefined" && typeof window.ethereum != "undefined") {
+      try {
+        /* get provider */
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        setProvider(provider);
+        /* get accounts */
+        const accounts = await provider.send("eth_accounts", []);
+        if (accounts.length > 0) {
+          /* get signer */
+          setSigner(provider.getSigner());
+          /* local contract instance */
+
+          const contract = new ethers.Contract(
+            CONTRACT_ADDRESS,
+            artifact.abi,
+            provider
+          );
+
+          setContract(contract);
+          /* set active wallet address */
+          setSignerAddress(accounts[0]);
+        } else {
+          console.log("Connect to MetaMask using the Connect Wallet button");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    } else {
+      /* MetaMask is not installed */
+      console.log("Please install MetaMask");
+    }
+  };
+
+  const addWalletListener = async () => {
+    if (typeof window != "undefined" && typeof window.ethereum != "undefined") {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        setSignerAddress(accounts[0]);
+      });
+    } else {
+      /* MetaMask is not installed */
+      setSignerAddress("");
+      console.log("Please install MetaMask");
+    }
+  };
+
+  // const connect = async () => {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   setProvider(provider);
+  //   await provider.send("eth_requestAccounts", []);
+  //   const signer = provider.getSigner();
+  //   setSigner(signer);
+  //   signer.getAddress().then((address) => {
+  //     setSignerAddress(address);
+  //   });
+  // };
+
+  // const onLoad = async () => {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   setProvider(provider);
+  //   await provider.send("eth_requestAccounts", []);
+
+  //   const signer = provider.getSigner();
+  //   setSigner(signer);
+
+  //   signer.getAddress().then((address) => {
+  //     setSignerAddress(address);
+  //   });
+  //   // const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   // await provider.send("eth_accounts", []);
+  //   // // setProvider(provider);
+
+  //   // if (provider !== undefined) {
+  //   //   setProvider(provider);
+  //   // }
+
+  //   // if (signer !== undefined) {
+  //   //   setSigner(signer);
+  //   // }
+
+  //   // signer.getAddress().then((address) => {
+  //   //   setSignerAddress(address);
+  //   // });
+
+  //   const contract = new ethers.Contract(
+  //     CONTRACT_ADDRESS,
+  //     artifact.abi,
+  //     provider
+  //   );
+
+  //   setContract(contract);
+  // };
 
   const isConnected = () => signer !== undefined;
 
-  const connect = () => {
-    getSigner(provider).then((signer) => {
-      setSigner(signer);
-    });
-  };
+  // const getSigner = async (signer) => {
+  //   signer.getAddress().then((address) => {
+  //     setSignerAddress(address);
+  //   });
 
-  const getSigner = async (provider) => {
-    // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-    const signer = provider.getSigner();
-
-    signer.getAddress().then((address) => {
-      setSignerAddress(address);
-    });
-
-    return signer;
-  };
+  // return signer;
+  // };
 
   const toWei = (ether) => ethers.utils.parseEther(ether);
 
@@ -97,7 +201,7 @@ function App() {
         ) : (
           <div>
             <p>You are not connected</p>
-            <button onClick={connect} className="btn btn-primary">
+            <button onClick={connectWallet} className="btn btn-primary">
               Connect Metamask
             </button>
           </div>

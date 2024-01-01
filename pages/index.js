@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import dotenv from "dotenv";
 dotenv.config();
 
-import { CiMoneyBill } from "react-icons/ci";
+import { SiEthereum } from "react-icons/si";
 
 import artifact from "../artifacts/contracts/BridgeCoinSale.sol/BridgeCoinSale.json";
 const CONTRACT_ADDRESS = "0x669e629Df706BA32C6aB53f1EA7fb2DD51B517d1";
@@ -101,55 +101,82 @@ function App() {
   const toWei = (ether) => ethers.utils.parseEther(ether);
 
   const buyTokens = async () => {
-    const wei = toWei(amount);
-    await contract.connect(signer).buyTokens(signerAddress, { value: wei });
+    try {
+      const wei = toWei(amount);
+      await contract.connect(signer).buyTokens(signerAddress, { value: wei });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        {isConnected() ? (
-          <div>
-            <p>Welcome {signerAddress?.substring(0, 10)}...</p>
-            <div className="list-group">
-              <div className="list-group-item">
-                <div className="row py-3">
-                  <div className="col-md-2">
-                    <CiMoneyBill
-                      className="rounded-circle"
-                      width="36"
-                      height="36"
-                    />
-                  </div>
+    <div className="bg-gradient-to-br from-red-800 via-[#060417] to-[#060417] min-h-screen">
+      {isConnected() ? (
+        <div className="flex flex-col place-items-center pt-40 space-y-4">
+          <div className="flex space-x-4 items-center">
+            <SiEthereum className="text-sky-500 w-12 h-12 animate-pulse" />
+            <p className="font-semibold text-xl">
+              <span className="bg-slate-600 rounded-l-sm p-2 font-semibold text-center">
+                {" "}
+                Connected to :{" "}
+              </span>
 
-                  <div className="col-md-5">
-                    <input
-                      className="inputField"
-                      placeholder="0.0"
-                      onChange={(e) => setAmount(e.target.value)}
-                    />
-                  </div>
+              <span className="bg-neutral-200 text-neutral-800 px-3 py-2 rounded-r-sm">
+                {signerAddress
+                  ? signerAddress.slice(0, 6) +
+                    "..." +
+                    signerAddress.slice(
+                      signerAddress.length - 6,
+                      signerAddress.length
+                    )
+                  : "------"}
+              </span>
+            </p>
+          </div>
 
-                  <div className="d-flex gap-4 col-md-3">RXC</div>
+          <div className="w-2/5 px-10 space-y-4 py-10">
+            <div className="flex w-full">
+              <div className="w-5/6">
+                <input
+                  className="w-full px-3 py-2 rounded-l-sm text-neutral-800 bg-neutral-50"
+                  placeholder="Enter Amount Here... 0.0"
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
 
-                  <div className="d-flex gap-4 col-md-2">
-                    <button class="btn btn-success" onClick={() => buyTokens()}>
-                      Buy
-                    </button>
-                  </div>
-                </div>
+              <div className="w-1/6 text-center bg-slate-600 rounded-r-sm p-2 font-semibold">
+                BGC
               </div>
             </div>
+
+            <div className="w-full">
+              <button
+                className="w-full bg-sky-700 rounded-md p-2 font-semibold hover:bg-sky-600"
+                onClick={() => buyTokens()}
+              >
+                Buy Coins
+              </button>
+            </div>
           </div>
-        ) : (
-          <div>
-            <p>You are not connected</p>
-            <button onClick={connectWallet} className="btn btn-primary">
-              Connect Metamask
-            </button>
-          </div>
-        )}
-      </header>
+        </div>
+      ) : (
+        <div className="flex flex-col place-items-center pt-40 space-y-4">
+          <h1 className="text-6xl font-medium text-neutral-300">
+            Welcome to BGC Coin ICO
+          </h1>
+          <p className="pb-10 text-xl font-normal text-neutral-200">
+            You are not connected. Please Connect Wallet to buy Coins
+          </p>
+          <button
+            className="py-2 px-3 w-fit border-2 border-sky-700 bg-sky-700
+             text-neutral-200 rounded-md font-semibold hover:bg-transparent "
+            onClick={connectWallet}
+          >
+            Connect Metamask
+          </button>
+        </div>
+      )}
+      <div></div>
     </div>
   );
 }
